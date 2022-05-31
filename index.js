@@ -11,7 +11,11 @@ app.set("views", "./src/controllers/views");
 app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
-  res.render("main-view");
+  try {
+    res.render("main-view");
+  } catch (error) {
+    res.send("<h2>Something went wrong</h2>");
+  }
 });
 
 app.get("/download", async (req, res) => {
