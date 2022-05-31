@@ -4,9 +4,6 @@ const ytdl = require("ytdl-core");
 const fs = require("fs");
 
 const PORT = process.env.PORT || 5000;
-
-console.log("Listening in port " + PORT);
-
 const app = express();
 
 app.use(express.static(__dirname + "/src/static"));
