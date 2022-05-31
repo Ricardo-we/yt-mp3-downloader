@@ -1,10 +1,9 @@
 const express = require("express");
 const ffmpeg = require("fluent-ffmpeg");
 const ytdl = require("ytdl-core");
-const readline = require("readline");
 const fs = require("fs");
 
-const PORT = 5000 || process.env.port;
+const PORT = 5000 || process.env.PORT;
 
 console.log("Listening in port " + PORT);
 
