@@ -3,7 +3,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const ytdl = require("ytdl-core");
 const fs = require("fs");
 
-const PORT = 5000 || process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
 console.log("Listening in port " + PORT);
 
