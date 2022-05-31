@@ -12,7 +12,9 @@ app.set("view engine", "ejs");
 
 app.get("/", (req, res) => {
   try {
-    res.render("main-view");
+    const { error } = req.query;
+
+    res.render("main-view", { error });
   } catch (error) {
     res.send("<h2>Something went wrong</h2>");
   }
@@ -40,7 +42,7 @@ app.get("/download", async (req, res) => {
         });
       });
   } catch (error) {
-    res.send(error);
+    res.redirect("/?error=true");
   }
 });
 
