@@ -22,7 +22,7 @@ app.get("/download", async (req, res) => {
     });
 
     const videoInfo = await ytdl.getInfo(url);
-    const filePath = `${__dirname}/media/${videoInfo.videoDetails.title}.mp3`;
+    const filePath = `${__dirname}/tmp/${videoInfo.videoDetails.title}.mp3`;
 
     const proc = ffmpeg({ source: stream })
       .setFfmpegPath("ffmpeg")
