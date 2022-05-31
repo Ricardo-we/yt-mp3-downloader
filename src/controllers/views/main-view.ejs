@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div class="container d-flex align-items-center justify-content-center">
+    <div class="container d-flex flex-wrap  align-items-center justify-content-center">
 
         <form method="GET" action="/download" class="form mt-2">
             <h3 class="w-100 text-center">Paste the link of the youtube video you want to download as mp3</h3>
@@ -19,14 +19,14 @@
             </div>
             <button type="submit" class="btn btn-outline-primary w-100">Submit</button>
         </form>
+        <% if(error){ %>
+            <div class="alert alert-danger w-100">
+                <%= error %>
+            </div>
+            <% } %>
     </div>
 
-    <% if(error){ %>
-        <div class="alert">
-            Something went wrong or invalid
-        </div>
-        <% } %>
-            <script src="/js/form.js"></script>
+    <script src="/js/form.js"></script>
 </body>
 
 </html>

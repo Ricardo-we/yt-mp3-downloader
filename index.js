@@ -20,17 +20,28 @@ app.get("/", (req, res) => {
   }
 });
 
-app.get("/download", async (req, res) => {
+app.get("/download", async (req, res, next) => {
   try {
     const url = req.query.url;
-    const stream = ytdl(url, {
-      quality: "highestaudio",
-    });
+    const urlIsValid = "https://www.youtube.com/watch?" === url.split("?")[0];
+    const errorUrl =
+      "/?error=You did'nt put a url, url shoud be like https://www.youtube.com/watch?v=9lHbSPmKOrs";
+    let stream;
+
+    if (!url || !urlIsValid) return res.redirect(errorUrl);
+
+    try {
+      stream = ytdl(url, {
+        quality: "highestaudio",
+      });
+    } catch (error) {
+      return res.redirect(errorUrl);
+    }
+    if (!stream) return res.redirect(errorUrl);
 
     const videoInfo = await ytdl.getInfo(url);
     const filePath = `${__dirname}/tmp/${videoInfo.videoDetails.title}.mp3`;
-
-    const proc = ffmpeg({ source: stream })
+    ffmpeg({ source: stream })
       .setFfmpegPath("ffmpeg")
       .toFormat("mp3")
       .saveToFile(filePath)
@@ -38,11 +49,11 @@ app.get("/download", async (req, res) => {
         res.download(filePath, (err) => {
           if (err) throw new Error("Failed");
           fs.unlinkSync(filePath);
-          res.redirect("/");
         });
+        res.redirect("/");
       });
   } catch (error) {
-    res.redirect("/?error=true");
+    res.redirect("/?error=Something went wrong");
   }
 });
 
