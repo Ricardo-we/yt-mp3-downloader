@@ -23,26 +23,25 @@ app.get("/", (req, res) => {
 
 app.get(
   "/download",
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res, next) => {
     const url = req.query.url;
     const errorUrl = "/?error=You put an invalid url";
-    if (!url) return res.redirect(errorUrl);
+    if (!url) return res.status(400).send(errorUrl);
     try {
       const stream = ytdl(url, {
         quality: "highestaudio",
-      }).on("error", (err) => res.redirect(errorUrl));
+      });
 
       const videoInfo = await ytdl.getInfo(url);
       const filePath = `${__dirname}/tmp/${videoInfo.videoDetails.title}.mp3`;
+      const file = fs.createWriteStream(filePath);
       ffmpeg({ source: stream })
         .setFfmpegPath("ffmpeg")
         .toFormat("mp3")
-        .pipe(res)
-        .on("error", (err) => {
-          res.status(500).send("<h3>Error</h3>");
-        });
+        .on("error", (err) => next(err))
+        .pipe(res, { end: true });
     } catch (error) {
-      return res.status(500).send("<h3>Error</h3>");
+      return res.status(500);
     }
   })
 );
