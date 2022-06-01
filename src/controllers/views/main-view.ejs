@@ -10,8 +10,7 @@
 </head>
 
 <body>
-    <div class="container d-flex flex-wrap  align-items-center justify-content-center">
-
+    <div style="height: 100vh;" class="container d-flex flex-wrap  align-items-center justify-content-center">
         <form id="search-form" class="form mt-2">
             <h3 class="w-100 text-center">Paste the link of the youtube video you want to download as mp3</h3>
             <div class="form-group">
@@ -20,12 +19,10 @@
             <a class="btn btn-outline-primary w-100" target="_blank" id="download-button" href="/" download>
                 Download
             </a>
+            <a class="btn btn-info w-100" target="_blank" id="download-button" href="https://youtube.com">
+                Go to Youtube
+            </a>
         </form>
-        <% if(error){ %>
-            <div class="alert alert-danger w-100">
-                <%= error %>
-            </div>
-            <% } %>
     </div>
 
     <script src="/js/form.js"></script>

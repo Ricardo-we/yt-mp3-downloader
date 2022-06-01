@@ -30,16 +30,20 @@ app.get(
     try {
       const stream = ytdl(url, {
         quality: "highestaudio",
-      });
+      }).on("error", (err) => next(err));
 
       const videoInfo = await ytdl.getInfo(url);
       const filePath = `${__dirname}/tmp/${videoInfo.videoDetails.title}.mp3`;
-      const file = fs.createWriteStream(filePath);
       ffmpeg({ source: stream })
         .setFfmpegPath("ffmpeg")
         .toFormat("mp3")
         .on("error", (err) => next(err))
-        .pipe(res, { end: true });
+        .saveToFile(filePath)
+        .on("end", () => {
+          res.download(filePath, () => {
+            fs.unlinkSync(filePath);
+          });
+        });
     } catch (error) {
       return res.status(500);
     }
