@@ -6,18 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <title>Document</title>
+    <title>MP3 video downloader</title>
 </head>
 
 <body>
     <div class="container d-flex flex-wrap  align-items-center justify-content-center">
 
-        <form method="GET" action="/download" class="form mt-2">
+        <form id="search-form" class="form mt-2">
             <h3 class="w-100 text-center">Paste the link of the youtube video you want to download as mp3</h3>
             <div class="form-group">
-                <input type="text" name="url" class="form-control">
+                <input id="search-input" required type="text" name="url" class="form-control">
             </div>
-            <button type="submit" class="btn btn-outline-primary w-100">Submit</button>
+            <a class="btn btn-outline-primary w-100" target="_blank" id="download-button" href="/" download>
+                Download
+            </a>
         </form>
         <% if(error){ %>
             <div class="alert alert-danger w-100">

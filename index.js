@@ -2,6 +2,7 @@ const express = require("express");
 const ffmpeg = require("fluent-ffmpeg");
 const ytdl = require("ytdl-core");
 const fs = require("fs");
+const asyncHandler = require("express-async-handler");
 // port
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -20,41 +21,30 @@ app.get("/", (req, res) => {
   }
 });
 
-app.get("/download", async (req, res, next) => {
-  try {
+app.get(
+  "/download",
+  asyncHandler(async (req, res) => {
     const url = req.query.url;
-    const urlIsValid = "https://www.youtube.com/watch?" === url.split("?")[0];
-    const errorUrl =
-      "/?error=You did'nt put a url, url shoud be like https://www.youtube.com/watch?v=9lHbSPmKOrs";
-    let stream;
-
-    if (!url || !urlIsValid) return res.redirect(errorUrl);
-
+    const errorUrl = "/?error=You put an invalid url";
+    if (!url) return res.redirect(errorUrl);
     try {
-      stream = ytdl(url, {
+      const stream = ytdl(url, {
         quality: "highestaudio",
-      });
-    } catch (error) {
-      return res.redirect(errorUrl);
-    }
-    if (!stream) return res.redirect(errorUrl);
+      }).on("error", (err) => res.redirect(errorUrl));
 
-    const videoInfo = await ytdl.getInfo(url);
-    const filePath = `${__dirname}/tmp/${videoInfo.videoDetails.title}.mp3`;
-    ffmpeg({ source: stream })
-      .setFfmpegPath("ffmpeg")
-      .toFormat("mp3")
-      .saveToFile(filePath)
-      .on("end", () => {
-        res.download(filePath, (err) => {
-          if (err) throw new Error("Failed");
-          fs.unlinkSync(filePath);
+      const videoInfo = await ytdl.getInfo(url);
+      const filePath = `${__dirname}/tmp/${videoInfo.videoDetails.title}.mp3`;
+      ffmpeg({ source: stream })
+        .setFfmpegPath("ffmpeg")
+        .toFormat("mp3")
+        .pipe(res)
+        .on("error", (err) => {
+          res.status(500).send("<h3>Error</h3>");
         });
-        res.redirect("/");
-      });
-  } catch (error) {
-    res.redirect("/?error=Something went wrong");
-  }
-});
+    } catch (error) {
+      return res.status(500).send("<h3>Error</h3>");
+    }
+  })
+);
 
 app.listen(PORT);
